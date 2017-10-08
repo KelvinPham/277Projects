@@ -1,0 +1,93 @@
+import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Random;
+
+public class Computer implements Serializable {
+	/**
+	 * the HashMap with all the known patterns
+	 */
+	HashMap<Pattern, Integer> saveMoves;
+
+	/**
+	 * constructor to initialize the computer
+	 */
+	public Computer() {
+		saveMoves = new HashMap<Pattern, Integer>();
+	}
+
+	/**
+	 * has the computer make predicions
+	 * @param playerHistory last four moves the player made
+	 * @return the computer choice
+	 */
+	public String makePrediction(String playerHistory) {
+		int compareValues1 = 0;
+		int compareValues2 = 0;
+		int compareValues3 = 0;
+		int useOption = 0;
+		String computerChoice = null;
+		Random num = new Random();
+		if (playerHistory.length() == 4) {
+			storePattern(playerHistory);
+			playerHistory = playerHistory.substring(1);
+			Pattern throwRock = new Pattern(playerHistory + "R");
+			Pattern throwPaper = new Pattern(playerHistory + "P");
+			Pattern throwScissors = new Pattern(playerHistory + "S");
+			if (saveMoves.get(throwRock) != null) {
+				compareValues1 = saveMoves.get(throwRock);
+			}
+			if (saveMoves.get(throwPaper) != null) {
+				compareValues2 = saveMoves.get(throwPaper);
+			}
+			if (saveMoves.get(throwScissors) != null) {
+				compareValues3 = saveMoves.get(throwScissors);
+			}
+			if (compareValues1 > compareValues2) {
+				useOption = 1;
+			} else if (compareValues1 > compareValues3) {
+				useOption = 1;
+			} else if (compareValues2 > compareValues1) {
+				useOption = 2;
+			} else if (compareValues2 > compareValues3) {
+				useOption = 2;
+			} else if (compareValues3 > compareValues1) {
+				useOption = 3;
+			} else if (compareValues3 > compareValues2) {
+				useOption = 3;
+			} else {
+				useOption = num.nextInt(3) + 1;
+			}
+
+		} else {
+			useOption = num.nextInt(3) + 1;
+		}
+		switch (useOption) {
+		case 1:
+			computerChoice = "P";
+			break;
+		case 2:
+			computerChoice = "S";
+			break;
+		case 3:
+			computerChoice = "R";
+			break;
+		}
+		return computerChoice;
+	}
+
+	/**
+	 * method stores pattern or increments to value if the pattern already exist
+	 * @param previousMoves the pattern to be stored
+	 */
+	public void storePattern(String previousMoves) {
+		int value = 1;
+		Pattern playerHistory = new Pattern(previousMoves);
+		if (saveMoves.containsKey(playerHistory)) {
+			value = saveMoves.get(playerHistory);
+			value++;
+			saveMoves.put(playerHistory, value);
+		} else {
+			saveMoves.put(playerHistory, value);
+		}
+	}
+}
